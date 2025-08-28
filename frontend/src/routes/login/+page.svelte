@@ -1,5 +1,3 @@
-<!-- svelte-ignore non_reactive_update -->
-<!-- svelte-ignore non_reactive_update -->
 <link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
 <script>
 	import { registerUser, loginUser } from '$lib/apiTools';
@@ -136,9 +134,4 @@
 	#backbutton:hover {
 		transform: none;
 	}
-	/*
---background: #000000;
---primary: #8580e6;
---secondary: #8d1c34;
---accent: #db8a4c; */
 </style>
