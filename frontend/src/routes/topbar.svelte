@@ -59,6 +59,7 @@
 		flex-direction: column;
 		gap: 10px;
 		padding: 10px;
+        z-index: 10;
 	}
 	button {
 		cursor: pointer;

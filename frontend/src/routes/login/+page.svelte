@@ -35,7 +35,7 @@
 	let userToken = $state("");
 
 </script>
-<div id="outer">
+<div id="outer" style="overflow-y: auto;">
 	<div id="main">
 		<button id="backbutton" onclick={() => window.location.href = "/"}><img src={LeftArrow} alt="Back"/></button>
 		<h1>PixellPage</h1>
