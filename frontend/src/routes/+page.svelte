@@ -3,10 +3,13 @@
 	import TopBar from './topbar.svelte';
 	import Title from "$lib/assets/title.png";
     import HypeFire from "$lib/assets/hypefire.png";
+    import NullProject from "$lib/assets/nullimg.png"
 
-	let lastProjects = $state(["_", "_", "_"]);
-    let otherProjects = $state(["_", "_", "_"]);
-    let hypedProjects = $state(["_", "_", "_"]);
+    let nullProject = {title: "missing project", image: NullProject, by: "null"}
+
+	let lastProjects = $state([nullProject, nullProject, nullProject]);
+    let otherProjects = $state([nullProject, nullProject, nullProject]);
+    let hypedProjects = $state([nullProject, nullProject, nullProject]);
 </script>
 <div id="main">
 	<TopBar />
@@ -18,7 +21,13 @@
 			<h1 class="cardheader">Jump Back In</h1>
 			<div class="cardcontent">
 				{#each lastProjects as project}
-					<div class="project">{project}</div>
+					<div class="project">
+                        <div class="innerproject">
+                            <img class="projectImg" src={project.image} alt={project.title}>
+                        </div>
+                        <h2>{project.title}</h2>
+                        <h4>{project.by}</h4>
+                    </div>
 				{/each}
 			</div>
 		</div>
@@ -26,7 +35,12 @@
             <h1 class="cardheader">Browse Other's</h1>
             <div class="cardcontent">
                 {#each otherProjects as project}
-                    <div class="project"><div style="width:100%;height:100%;border:1px solid white;"></div></div>
+                    <div class="project">
+                        <div class="innerproject">
+                            <img class="projectImg" src={project.image} alt={project.title}>
+                        </div>
+                        <h2>{project.title}</h2>
+                    </div>
                 {/each}
             </div>
 		</div>
@@ -34,7 +48,12 @@
             <h1 class="cardheader">Hyped Projects <img style="width: 20px; height: 20px;display: inline-block;" src={HypeFire} alt="hypefire" /></h1>
             <div class="cardcontent">
                 {#each hypedProjects as project}
-                    <div class="project">{project}</div>
+                    <div class="project">
+                        <div class="innerproject">
+                            <img class="projectImg" src={project.image} alt={project.title}>
+                        </div>
+                        <h2>{project.title}</h2>
+                    </div>
                 {/each}
             </div>
         </div>
@@ -123,11 +142,42 @@
 	}
 	.project {
 		display: inline-block;
-		padding: 20px;
+		padding: 10px;
+        padding-bottom: 40px;
         margin: 10px;
 		width: 15vw;
-		height: 15vw;
+		height: calc(15vw + 40px);
 		background: blue;
 		border-radius: 5px;
+        transition:cubic-bezier(1, 0, 0, 1) .25s;
+        cursor: pointer;
 	}
+    .project:hover {
+        transform: scale(1.05);
+    }
+    .innerproject {
+        width:100%;
+        height:100%;
+        border:1px solid white;
+    }
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    .projectImg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    h4 {
+        font-size: .6rem;
+    }
 </style>

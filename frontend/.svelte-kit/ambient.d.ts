@@ -68,13 +68,13 @@ declare module '$env/static/private' {
 	export const GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 	export const COLOR: string;
 	export const DEBUGINFOD_URLS: string;
-	export const npm_config_metrics_registry: string;
 	export const IM_CONFIG_PHASE: string;
 	export const WAYLAND_DISPLAY: string;
 	export const LOGNAME: string;
 	export const JOURNAL_STREAM: string;
 	export const _: string;
 	export const npm_config_prefix: string;
+	export const npm_config_npm_version: string;
 	export const XDG_CONFIG_DIRS_VSCODE_SNAP_ORIG: string;
 	export const MEMORY_PRESSURE_WATCH: string;
 	export const XDG_SESSION_CLASS: string;
@@ -126,7 +126,6 @@ declare module '$env/static/private' {
 	export const npm_config_globalconfig: string;
 	export const npm_config_init_module: string;
 	export const PWD: string;
-	export const npm_config_globalignorefile: string;
 	export const npm_execpath: string;
 	export const XDG_CONFIG_DIRS: string;
 	export const XDG_DATA_DIRS: string;
@@ -208,13 +207,13 @@ declare module '$env/dynamic/private' {
 		GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 		COLOR: string;
 		DEBUGINFOD_URLS: string;
-		npm_config_metrics_registry: string;
 		IM_CONFIG_PHASE: string;
 		WAYLAND_DISPLAY: string;
 		LOGNAME: string;
 		JOURNAL_STREAM: string;
 		_: string;
 		npm_config_prefix: string;
+		npm_config_npm_version: string;
 		XDG_CONFIG_DIRS_VSCODE_SNAP_ORIG: string;
 		MEMORY_PRESSURE_WATCH: string;
 		XDG_SESSION_CLASS: string;
@@ -266,7 +265,6 @@ declare module '$env/dynamic/private' {
 		npm_config_globalconfig: string;
 		npm_config_init_module: string;
 		PWD: string;
-		npm_config_globalignorefile: string;
 		npm_execpath: string;
 		XDG_CONFIG_DIRS: string;
 		XDG_DATA_DIRS: string;

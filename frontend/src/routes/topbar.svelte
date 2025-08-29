@@ -7,8 +7,8 @@
 </script>
 <div id="outer">
 	<div id="main">
-		<button class="mainbutton" id="home"><img src={House} alt="home"/></button>
-		<button class="mainbutton" id="editor">Editor</button>
+		<button class="mainbutton" id="home" onclick={() => window.location.href = "/"}><img src={House} alt="home"/></button>
+		<button class="mainbutton" id="editor" onclick={() => window.location.href = "/editor"}>Editor</button>
 		<button class="mainbutton" id="account" onclick={() => isAccountMenuOpen = !isAccountMenuOpen}><img src={Account} alt="account"/></button>
 	</div>
 </div>
@@ -35,6 +35,7 @@
 		background: #db8a4c;
 		padding-left: 20px;
 		padding-right: 20px;
+        z-index: 2;
 	}
 	img {
 		width: 40px;
