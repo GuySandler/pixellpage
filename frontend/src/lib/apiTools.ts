@@ -24,4 +24,8 @@ function loginUser(username: string, gridPassword: string) {
 		.then(res => res.json());
 }
 
-export { fetchFromAPI, registerUser, loginUser };
+function publishImg(base64img: string, token: string, by: string) {
+	return fetchFromAPI({ image: base64img, by }, "POST", "/api/publish", token);
+}
+
+export { fetchFromAPI, registerUser, loginUser, publishImg };

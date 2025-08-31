@@ -16,8 +16,13 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "supersecretkeyfallback";
 
+// app.use(cors({
+//   origin: 'http://localhost:5173',  // TODO: UPDATE THIS
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization']
+// }));
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -29,6 +34,20 @@ const limiter = rateLimit({
 	max: 200,
 });
 app.use(limiter);
+
+function verifyToken(req, res, next) {
+	const token = req.headers.authorization?.split(" ")[1];
+	if (!token) {
+		return res.status(401).json({ message: "Unauthorized" });
+	}
+	jwt.verify(token, JWT_SECRET, (err, decoded) => {
+		if (err) {
+			return res.status(401).json({ message: "Unauthorized" });
+		}
+		req.userId = decoded.userId;
+		next();
+	});
+}
 
 app.get("/api/ping", (req, res) => {
 	res.json({ message: "pong" });
@@ -46,17 +65,14 @@ app.post("/api/newdb", (req, res) => {
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)
   	`);
-	// db.exec(`
-	// 	CREATE TABLE IF NOT EXISTS ysws (
-	// 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	// 	name TEXT NOT NULL,
-	// 	description TEXT,
-	// 	startdate TEXT,
-	// 	enddate TEXT,
-	// 	owner INTEGER NOT NULL,
-	// 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	// 	)
-  	// `);
+	db.exec(`
+		CREATE TABLE IF NOT EXISTS posts (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		by TEXT NOT NULL,
+		imgbase64 TEXT,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+		)
+  	`);
 	res.sendStatus(200);
 });
 app.post("/api/register", (req, res) => {
@@ -76,7 +92,12 @@ app.post("/api/register", (req, res) => {
 
 	const passwordHash = bcrypt.hashSync(password, 10);
 	db.prepare("INSERT INTO users (username, passwordHash) VALUES (?, ?)").run(username, passwordHash);
-	res.sendStatus(201).json({ message: "User registered successfully" });
+
+	const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+	// Include username in the token payload
+	const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
+
+	res.status(201).json({ message: "User registered successfully", token: token });
 });
 app.post("/api/login", (req, res) => {
 	if (!req.body) {
@@ -97,8 +118,39 @@ app.post("/api/login", (req, res) => {
 		return res.status(401).json({ message: "Invalid username or password" });
 	}
 
-	const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
+	// Include username in the token payload
+	const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
 	res.json({ token: token, message: "Login successful"});
+});
+
+// Middleware to verify JWT token
+function verifyToken(req, res, next) {
+	const token = req.headers.authorization?.split(" ")[1];
+	
+	if (!token) {
+		return res.status(401).json({ message: "Unauthorized: No token provided" });
+	}
+	
+	jwt.verify(token, JWT_SECRET, (err, decoded) => {
+		if (err) {
+			return res.status(401).json({ message: "Unauthorized: Invalid token" });
+		}
+		
+		// Add decoded token data to the request object
+		req.user = decoded;
+		next();
+	});
+}
+
+app.post("/api/publish", verifyToken, (req, res) => {
+	const { image } = req.body;
+	
+	// Get username from the token instead of body
+	const username = req.user.username;
+	
+	// Insert with username instead of user ID
+	db.prepare("INSERT INTO posts (by, imgbase64) VALUES (?, ?)").run(username, image);
+	res.status(201).json({ message: "Image published successfully" });
 });
 
 app.listen(3000, () => {

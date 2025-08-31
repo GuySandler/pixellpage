@@ -15,8 +15,9 @@
 		if (response.message != "User registered successfully") {
 			problem = response.message;
 		} else {
-			isLoggedIn = true;
 			userToken = response.token;
+			isLoggedIn = true;
+			window.location.href = '/';
 		}
 	}
 	async function login() {
@@ -26,28 +27,56 @@
 		if (response.message != "Login successful") {
 			problem = response.message;
 		} else {
-			isLoggedIn = true;
 			userToken = response.token;
+			isLoggedIn = true;
+			window.location.href = '/';
 		}
-		console.log(response);
 	}
 	let isLoggedIn = $state(false);
 	let userToken = $state("");
 
+	import { onMount } from 'svelte';
+	onMount(() => {
+		const savedToken = localStorage.getItem('userToken');
+		if (savedToken) {
+			userToken = savedToken;
+			isLoggedIn = true;
+		}
+	});
+
+	$effect(() => {
+		if (userToken) {
+			localStorage.setItem('userToken', userToken);
+		}
+	});
+	
+	function logout() {
+		localStorage.removeItem('userToken');
+		userToken = "";
+		isLoggedIn = false;
+	}
 </script>
 <div id="outer" style="overflow-y: auto;">
 	<div id="main">
 		<button id="backbutton" onclick={() => window.location.href = "/"}><img src={LeftArrow} alt="Back"/></button>
 		<h1>PixellPage</h1>
-		<h2>Please enter your username</h2>
-		<input type="text" id="username" bind:value={username}/>
-		<h2>Please draw your password</h2>
-		<Pixellogin bind:this={gridref}/>
-		<div>
-			<button onclick={register}>Register</button>
-			<button onclick={login}>Login</button>
-		</div>
-		<p id="problem" style="display: {problem ? "block" : "none"}">{problem}</p>
+		
+		{#if isLoggedIn}
+			<h2>You are logged in!</h2>
+			<p>Welcome back, {username || "User"}!</p>
+			<button onclick={() => window.location.href = "/"}>Go to Home</button>
+			<button onclick={logout}>Log Out</button>
+		{:else}
+			<h2>Please enter your username</h2>
+			<input type="text" id="username" bind:value={username}/>
+			<h2>Please draw your password</h2>
+			<Pixellogin bind:this={gridref}/>
+			<div>
+				<button onclick={register}>Register</button>
+				<button onclick={login}>Login</button>
+			</div>
+			<p id="problem" style="display: {problem ? "block" : "none"}">{problem}</p>
+		{/if}
 	</div>
 </div>
 <style>

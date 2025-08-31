@@ -5,7 +5,7 @@
     import HypeFire from "$lib/assets/hypefire.png";
     import NullProject from "$lib/assets/nullimg.png"
 
-    let nullProject = {title: "missing project", image: NullProject, by: "null"}
+    let nullProject = {image: NullProject, by: "null"}
 
 	let lastProjects = $state([nullProject, nullProject, nullProject]);
     let otherProjects = $state([nullProject, nullProject, nullProject]);
@@ -23,10 +23,10 @@
 				{#each lastProjects as project}
 					<div class="project">
                         <div class="innerproject">
-                            <img class="projectImg" src={project.image} alt={project.title}>
+                            <img class="projectImg" src={project.image} alt={project.by}>
                         </div>
-                        <h2>{project.title}</h2>
-                        <h4>{project.by}</h4>
+                        <!-- <h2>{project.title}</h2> -->
+                        <h2>{project.by}</h2>
                     </div>
 				{/each}
 			</div>
@@ -37,9 +37,9 @@
                 {#each otherProjects as project}
                     <div class="project">
                         <div class="innerproject">
-                            <img class="projectImg" src={project.image} alt={project.title}>
+                            <img class="projectImg" src={project.image} alt={project.by}>
                         </div>
-                        <h2>{project.title}</h2>
+                        <h2>{project.by}</h2>
                     </div>
                 {/each}
             </div>
@@ -50,9 +50,9 @@
                 {#each hypedProjects as project}
                     <div class="project">
                         <div class="innerproject">
-                            <img class="projectImg" src={project.image} alt={project.title}>
+                            <img class="projectImg" src={project.image} alt={project.by}>
                         </div>
-                        <h2>{project.title}</h2>
+                        <h2>{project.by}</h2>
                     </div>
                 {/each}
             </div>
