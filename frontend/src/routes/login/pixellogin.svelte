@@ -44,6 +44,7 @@
 			default:
 				console.log("problem");
 		}
+		grid = [...grid];
 	}
 	
 	function undo() {
@@ -63,6 +64,7 @@
 		} else {
 			console.log("no lastaction");
 		}
+		grid = [...grid];
 	}
 
 	let selectedTool = $state("pencil");

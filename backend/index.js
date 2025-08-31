@@ -15,6 +15,7 @@ const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
+const crypto = require("crypto");
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkeyfallback";
 
@@ -90,7 +91,8 @@ app.post("/api/register", (req, res) => {
 		return res.status(400).json({ message: "User already exists" });
 	}
 
-	const passwordHash = bcrypt.hashSync(password, 10);
+	const passwordDigest = crypto.createHash('sha256').update(password).digest('hex');
+	const passwordHash = bcrypt.hashSync(passwordDigest, 10);
 	db.prepare("INSERT INTO users (username, passwordHash) VALUES (?, ?)").run(username, passwordHash);
 
 	const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
@@ -113,7 +115,8 @@ app.post("/api/login", (req, res) => {
 		return res.status(401).json({ message: "Invalid username or password" });
 	}
 
-	if (!bcrypt.compareSync(password, user.passwordHash)) {
+	const passwordDigest = crypto.createHash('sha256').update(password).digest('hex');
+	if (!bcrypt.compareSync(passwordDigest, user.passwordHash)) {
 		return res.status(401).json({ message: "Invalid username or password" });
 	}
 
