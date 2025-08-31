@@ -1,8 +1,4 @@
 # pixellpage
+a simple pixelart board that shows the last 3 publishes and has a 6x6 * 9 colors login
 
-todo: copy paste password to allow autofill
-/*
---background: #000000;
---primary: #8580e6;
---secondary: #8d1c34;
---accent: #db8a4c; */
+use the command ```node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"``` to get the secrete for the API
