@@ -94,8 +94,7 @@ app.post("/api/register", (req, res) => {
 	db.prepare("INSERT INTO users (username, passwordHash) VALUES (?, ?)").run(username, passwordHash);
 
 	const user = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
-	// Include username in the token payload
-	const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
+	const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
 
 	res.status(201).json({ message: "User registered successfully", token: token });
 });
@@ -118,39 +117,21 @@ app.post("/api/login", (req, res) => {
 		return res.status(401).json({ message: "Invalid username or password" });
 	}
 
-	// Include username in the token payload
-	const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: "1h" });
+	const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
 	res.json({ token: token, message: "Login successful"});
 });
-
-// Middleware to verify JWT token
-function verifyToken(req, res, next) {
-	const token = req.headers.authorization?.split(" ")[1];
-	
-	if (!token) {
-		return res.status(401).json({ message: "Unauthorized: No token provided" });
-	}
-	
-	jwt.verify(token, JWT_SECRET, (err, decoded) => {
-		if (err) {
-			return res.status(401).json({ message: "Unauthorized: Invalid token" });
-		}
-		
-		// Add decoded token data to the request object
-		req.user = decoded;
-		next();
-	});
-}
-
 app.post("/api/publish", verifyToken, (req, res) => {
 	const { image } = req.body;
-	
-	// Get username from the token instead of body
-	const username = req.user.username;
-	
-	// Insert with username instead of user ID
-	db.prepare("INSERT INTO posts (by, imgbase64) VALUES (?, ?)").run(username, image);
-	res.status(201).json({ message: "Image published successfully" });
+	const user = db.prepare("SELECT username FROM users WHERE id = ?").get(req.userId);
+	if (!user) {
+		return res.status(404).json({ message: "User not found" });
+	}
+	db.prepare("INSERT INTO posts (by, imgbase64) VALUES (?, ?)").run(user.username, image);
+	res.sendStatus(201);
+});
+app.get("/api/posts", (req, res) => {
+	const posts = db.prepare("SELECT * FROM posts ORDER BY created_at DESC LIMIT 3").all();
+	res.json(posts);
 });
 
 app.listen(3000, () => {

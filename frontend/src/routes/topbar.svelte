@@ -15,12 +15,15 @@
 {#if isAccountMenuOpen}
 <div id="accountmenu">
 	<div id="divit"></div>
+	{#if localStorage.getItem('userToken')}
+	<button onclick={() => { localStorage.removeItem('userToken'); window.location.href = "/"; }}>
+		<p>Log Out</p>
+	</button>
+	{:else}
 	<button onclick={() => window.location.href = "/login"}>
-		<p>log in/sign up</p>
+		<p>Log in/sign up</p>
 	</button>
-	<button onclick={() => window.location.href = "/"}>
-		<p>settings</p>
-	</button>
+	{/if}
 </div>
 {/if}
 <style>

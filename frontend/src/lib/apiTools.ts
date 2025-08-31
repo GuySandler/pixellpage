@@ -28,4 +28,8 @@ function publishImg(base64img: string, token: string, by: string) {
 	return fetchFromAPI({ image: base64img, by }, "POST", "/api/publish", token);
 }
 
-export { fetchFromAPI, registerUser, loginUser, publishImg };
+function fetchPosts() {
+	return fetchFromAPI(null, "GET", "/api/posts").then(res => res.json());
+}
+
+export { fetchFromAPI, registerUser, loginUser, publishImg, fetchPosts };

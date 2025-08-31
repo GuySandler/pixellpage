@@ -1,5 +1,5 @@
-<script>
-	import { fetchFromAPI } from '$lib/apiTools';
+<script lang="ts">
+	import { fetchPosts } from '$lib/apiTools';
 	import TopBar from './topbar.svelte';
 	import Title from "$lib/assets/title.png";
     import HypeFire from "$lib/assets/hypefire.png";
@@ -7,9 +7,23 @@
 
     let nullProject = {image: NullProject, by: "null"}
 
-	let lastProjects = $state([nullProject, nullProject, nullProject]);
-    let otherProjects = $state([nullProject, nullProject, nullProject]);
-    let hypedProjects = $state([nullProject, nullProject, nullProject]);
+	let lastProjects: { image: string; by: string; }[] = [nullProject, nullProject];
+	let otherProjects: { image: string; by: string; }[] = [nullProject, nullProject];
+	let hypedProjects: { image: string; by: string; }[] = [nullProject, nullProject];
+
+	fetchPosts().then((posts: any[]) => {
+		if (posts && posts.length > 0) {
+			const formattedPosts = posts.map((post) => ({
+				image: post.imgbase64,
+				by: post.by
+			}));
+			if (formattedPosts.length > 0) {
+				lastProjects = [...formattedPosts].slice(0, 2);
+				otherProjects = [...formattedPosts].slice(0, 5);
+				hypedProjects = [...formattedPosts].slice(0, 3);
+			}
+		}
+	});
 </script>
 <div id="main">
 	<TopBar />
@@ -18,7 +32,7 @@
 			<img style="width: 30vw; height: auto;" src={Title} alt="title" />
 		</div>
 		<div id="jumpback" class="card">
-			<h1 class="cardheader">Jump Back In</h1>
+			<h1 class="cardheader">Recent Projects</h1>
 			<div class="cardcontent">
 				{#each lastProjects as project}
 					<div class="project">
@@ -31,7 +45,7 @@
 				{/each}
 			</div>
 		</div>
-		<div class="card">
+		<!-- <div class="card">
             <h1 class="cardheader">Browse Other's</h1>
             <div class="cardcontent">
                 {#each otherProjects as project}
@@ -56,7 +70,7 @@
                     </div>
                 {/each}
             </div>
-        </div>
+        </div> -->
 	</div>
 </div>
 <style>
@@ -143,7 +157,7 @@
 	.project {
 		display: inline-block;
 		padding: 10px;
-        padding-bottom: 40px;
+        padding-bottom: 28px;
         margin: 10px;
 		width: 15vw;
 		height: calc(15vw + 40px);
